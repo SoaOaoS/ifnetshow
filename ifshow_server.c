@@ -1,9 +1,6 @@
 /*
  * ifnetshow agent serveur
  *
- * Ce programme expose les fonctions de ifshow sur le réseau. 
- * Il utilise dup2 pour capturer la sortie de stdout dans un buffer
- * et l'envoyer au client TCP.
  */
 
 #include <ifaddrs.h>
@@ -19,9 +16,7 @@
 #define PORT 5050
 #define BUF_SIZE 8192
 
-/*************************
- * Fonctions ifshow exactes
- *************************/
+// Fonctions copéiées de ifshow.c
 
 static int addr_to_string(const struct sockaddr *sa, char *buf, size_t buflen) {
     if (!sa || !buf || buflen == 0) return -1;
@@ -76,7 +71,8 @@ void help() {
 }
 
 static void print_interface_header(const char *ifname) {
-    if (ifname && *ifname) printf("%s:\n", ifname);
+    if (ifname && *ifname) 
+        printf("%s:\n", ifname);
 }
 
 static void print_address_bullet(const struct sockaddr *addr, const struct sockaddr *netmask) {
@@ -154,12 +150,12 @@ static void show_single_interface(const char *target_ifname) {
     }
 
     freeifaddrs(ifaddr);
-    if (!found) printf("Interface '%s' not found or has no IP.\n", target_ifname);
+    if (!found) 
+    printf("Interface '%s' not found or has no IP.\n", target_ifname);
 }
 
-/**************************************
- * Capture stdout via dup2 pour serveur
- **************************************/
+// Fonction pour capturer la sortie de stdout et l'envoyer dans un autre fd
+
 static void capture_output(void (*func)(const char *), const char *arg, char *buf, size_t buflen) {
     int pipefd[2];
     if (pipe(pipefd) < 0) { snprintf(buf, buflen, "Erreur interne\n"); return; }
@@ -188,9 +184,8 @@ static void capture_output(void (*func)(const char *), const char *arg, char *bu
     close(pipefd[0]);
 }
 
-/*********************
- * Serveur TCP
- *********************/
+// Serveur TCP principal
+
 int main(void) {
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
     int opt = 1;
