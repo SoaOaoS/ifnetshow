@@ -1,0 +1,18 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          { "path": "dist/client", "label": "ifshow client (executable)" },
+          { "path": "dist/client.tgz", "label": "ifshow client (.tgz)" },
+          { "path": "dist/server", "label": "ifshow server (executable)" },
+          { "path": "dist/server.tgz", "label": "ifshow server (.tgz)" }
+        ]
+      }
+    ]
+  ]
+}
